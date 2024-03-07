@@ -14,7 +14,11 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 @app.route("/")
 def index():
     db_sess = db_session.create_session()
-    news = db_sess.query(News).filter(News.is_private != True)
+    if current_user.is_authenticated:
+        news = db_sess.query(News).filter(
+            (News.user == current_user) | (News.is_private != True))
+    else:
+        news = db_sess.query(News).filter(News.is_private != True)
     return render_template("index.html", news=news)
 
 

@@ -1,9 +1,9 @@
-from flask import Flask, render_template, redirect, request, make_response, abort
+from flask import Flask, render_template, redirect, request, make_response, abort, jsonify
 import datetime
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data.users import User
 from data.news import News
-from data import db_session
+from data import db_session, news_api
 from forms.user import RegisterForm
 from forms.loginform import LoginForm
 from forms.news import NewsForm
@@ -144,10 +144,18 @@ def edit_news(id):
                            form=form
                            )
 
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({'error': 'Not found'}), 404)
 
+
+@app.errorhandler(400)
+def bad_request(_):
+    return make_response(jsonify({'error': 'Bad Request'}), 400)
 
 def main():
     db_session.global_init("db/blogs.db")
+    app.register_blueprint(news_api.blueprint)
     app.run()
 
 

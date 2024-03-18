@@ -1,5 +1,4 @@
 from flask import Flask, render_template, redirect, request, make_response, abort, jsonify
-import datetime
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data.users import User
 from data.news import News
@@ -94,6 +93,7 @@ def logout():
     logout_user()
     return redirect("/")
 
+
 @app.route('/news',  methods=['GET', 'POST'])
 @login_required
 def add_news():
@@ -110,6 +110,7 @@ def add_news():
         return redirect('/')
     return render_template('news.html', title='Добавление новости',
                            form=form)
+
 
 @app.route('/news/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -144,6 +145,7 @@ def edit_news(id):
                            form=form
                            )
 
+
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
@@ -152,6 +154,7 @@ def not_found(error):
 @app.errorhandler(400)
 def bad_request(_):
     return make_response(jsonify({'error': 'Bad Request'}), 400)
+
 
 def main():
     db_session.global_init("db/blogs.db")
